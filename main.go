@@ -15,8 +15,8 @@
 package main
 
 import (
-	"log"
 	"github.com/volker48/touchstone/cmd"
+	"log"
 )
 
 func main() {

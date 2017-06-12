@@ -18,6 +18,7 @@ import (
 	"log"
 	"math"
 	"strconv"
+	"strings"
 )
 
 type ConfusionMatrix struct {
@@ -28,7 +29,7 @@ type ConfusionMatrix struct {
 	Total int64
 }
 
-func (cm *ConfusionMatrix) Update(yText, yHatText string) {
+func (cm *ConfusionMatrix) Update(yText, yHatText, yWeightText string) {
 	y, err := strconv.ParseInt(yText, 10, 8)
 	if err != nil {
 		log.Fatal("Error parsing int", err)
@@ -37,6 +38,18 @@ func (cm *ConfusionMatrix) Update(yText, yHatText string) {
 	if err != nil {
 		log.Fatal("Error parsing int", err)
 	}
+
+	var yWeight int64
+	invalidWeight := strings.Contains(yWeightText, "|")
+	if !invalidWeight {
+		yWeight, err = strconv.ParseInt(yWeightText, 10, 64)
+		if err != nil {
+			log.Fatal("Error parsing int", err)
+		}
+	} else {
+		yWeight = 1
+	}
+
 	if y == -1 {
 		y = 0
 	}
@@ -47,16 +60,16 @@ func (cm *ConfusionMatrix) Update(yText, yHatText string) {
 	case 0:
 		switch yHat {
 		case 0:
-			cm.TN += 1
+			cm.TN += 1 * yWeight
 		case 1:
-			cm.FP += 1
+			cm.FP += 1 * yWeight
 		}
 	case 1:
 		switch yHat {
 		case 0:
-			cm.FN += 1
+			cm.FN += 1 * yWeight
 		case 1:
-			cm.TP += 1
+			cm.TP += 1 * yWeight
 		}
 
 	}
@@ -72,18 +85,18 @@ func (cm *ConfusionMatrix) FScore(beta float64) float64 {
 }
 
 func (cm *ConfusionMatrix) Precision() float64 {
-	return float64(cm.TP) / float64(cm.TP + cm.FP)
+	return float64(cm.TP) / float64(cm.TP+cm.FP)
 }
 
 func (cm *ConfusionMatrix) Recall() float64 {
-	return float64(cm.TP) / float64(cm.TP + cm.FN)
+	return float64(cm.TP) / float64(cm.TP+cm.FN)
 }
 func (cm *ConfusionMatrix) MCC() float64 {
-	denom := float64(cm.TP + cm.FP) * float64(cm.TP + cm.FN) * float64(cm.TN + cm.FP) * float64(cm.TN + cm.FN)
+	denom := float64(cm.TP+cm.FP) * float64(cm.TP+cm.FN) * float64(cm.TN+cm.FP) * float64(cm.TN+cm.FN)
 	if denom == 0.0 {
 		return 0.0
 	}
-	numerator := float64(cm.TP * cm.TN) - float64(cm.FP * cm.FN)
+	numerator := float64(cm.TP*cm.TN) - float64(cm.FP*cm.FN)
 	mcc := numerator / math.Sqrt(denom)
 	return mcc
 }

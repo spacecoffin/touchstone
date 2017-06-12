@@ -68,7 +68,7 @@ func initConfig() {
 		viper.SetConfigFile(cfgFile)
 	}
 
-	viper.SetConfigName(".touchstone") // name of config file (without extension)
+	viper.SetConfigName(".touchstone")     // name of config file (without extension)
 	viper.AddConfigPath(os.Getenv("HOME")) // adding home directory as first search path
 	viper.AutomaticEnv()                   // read in environment variables that match
 

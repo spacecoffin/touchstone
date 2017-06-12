@@ -1,16 +1,16 @@
 package cmd
 
 import (
-	"os"
-	"log"
 	"bufio"
-	"strings"
 	"compress/gzip"
+	"log"
+	"os"
 	"path/filepath"
+	"strings"
 )
 
 type Updater interface {
-	Update(y, yhat string)
+	Update(y, yhat, yweight string)
 }
 
 func readFiles(args []string, u Updater) {
@@ -77,10 +77,10 @@ func readFiles(args []string, u Updater) {
 		}
 
 		yText := yScanner.Text()
-		columnsY := strings.SplitN(yText, " ", 2)
+		columnsY := strings.SplitN(yText, " ", 3)
 		yHatText := yHatScanner.Text()
 		columnsYHat := strings.SplitN(yHatText, " ", 2)
 
-		u.Update(columnsY[0], columnsYHat[0])
+		u.Update(columnsY[0], columnsYHat[0], columnsY[1])
 	}
 }

@@ -15,8 +15,8 @@
 package cmd
 
 import (
-	"github.com/volker48/touchstone/metrics"
 	"github.com/spf13/cobra"
+	"github.com/volker48/touchstone/metrics"
 	"log"
 )
 

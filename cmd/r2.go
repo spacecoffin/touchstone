@@ -33,7 +33,7 @@ The label is expected to be in the first column.
 		readFiles(args, residuals)
 
 		log.Println("Number of samples: ", residuals.Count)
-		log.Println("Mean y: ", residuals.Sum / float64(residuals.Count))
+		log.Println("Mean y: ", residuals.Sum/float64(residuals.Count))
 		log.Println("Mean Squared Error: ", residuals.MSE())
 		log.Printf("R Squared: %f", residuals.RSquared())
 	},

@@ -1,8 +1,8 @@
 package metrics
 
 import (
-	"strconv"
 	"log"
+	"strconv"
 )
 
 type Residuals struct {
@@ -26,7 +26,7 @@ func (ss *Residuals) MSE() float64 {
 	return ss.SS_Res / float64(ss.Count)
 }
 
-func (ss *Residuals) Update(yText, yHatText string) {
+func (ss *Residuals) Update(yText, yHatText, yWeight string) {
 	y, err := strconv.ParseFloat(yText, 64)
 	if err != nil {
 		log.Fatal("Error parsing float: ", err)

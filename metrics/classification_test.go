@@ -15,8 +15,8 @@
 package metrics
 
 import (
-	"testing"
 	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 var confusiontests = []struct {
@@ -24,13 +24,20 @@ var confusiontests = []struct {
 	out float64
 }{
 	{
-		in: [][]string{[]string{"1", "1"}, []string{"1", "1"}, []string{"1", "1"}, []string{"1", "1"}},
+		in:  [][]string{{"1", "1", "|a"}, {"1", "1", "|a"}, {"1", "1", "|a"}, {"1", "1", "|a"}},
 		out: 1.0,
 	},
 	{
-
-		in: [][]string{[]string{"1", "0"}, []string{"1", "0"}, []string{"1", "1"}, []string{"1", "1"}},
+		in:  [][]string{{"1", "0", "|a"}, {"1", "0", "|a"}, {"1", "1", "|a"}, {"1", "1", "|a"}},
 		out: 2.0 / 3.0,
+	},
+	{
+		in:  [][]string{{"1", "0", "1"}, {"1", "0", "1"}, {"1", "1", "1"}, {"1", "1", "1"}},
+		out: 2.0 / 3.0,
+	},
+	{
+		in:  [][]string{{"1", "0", "2"}, {"1", "0", "2"}, {"1", "1", "1"}, {"1", "1", "1"}},
+		out: 1.0 / 2.0,
 	},
 }
 
@@ -40,7 +47,8 @@ func TestConfusionMatrix_F1Score(t *testing.T) {
 		for i := 0; i < len(ct.in); i++ {
 			y := ct.in[i][0]
 			yHat := ct.in[i][1]
-			cm.Update(y, yHat)
+			yWeight := ct.in[i][2]
+			cm.Update(y, yHat, yWeight)
 
 		}
 		f1 := cm.FScore(1.0)
